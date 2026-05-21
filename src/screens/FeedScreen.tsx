@@ -23,6 +23,7 @@ interface Props {
   onOpenProfile: (userId: string) => void;
   onOpenStoryComposer: () => void;
   onOpenStoryViewer: (authorIndex: number) => void;
+  onOpenPost: (postId: string) => void;
 }
 
 export const FeedScreen: React.FC<Props> = ({
@@ -31,6 +32,7 @@ export const FeedScreen: React.FC<Props> = ({
   onOpenProfile,
   onOpenStoryComposer,
   onOpenStoryViewer,
+  onOpenPost,
 }) => {
   const { palette } = useTheme();
   const { t } = useTranslation();
@@ -191,6 +193,8 @@ export const FeedScreen: React.FC<Props> = ({
               signaled={user ? item.signaledBy?.includes(user.id) : false}
               onLike={(id) => user && toggleLike(id, user.id)}
               onSignal={() => handleSignal(item)}
+              onComment={(id) => onOpenPost(id)}
+              onPress={(p) => onOpenPost(p.id)}
               onAuthorPress={onOpenProfile}
               onReport={(id) => user && reportPost(id, user.id, 'flagged from feed')}
             />

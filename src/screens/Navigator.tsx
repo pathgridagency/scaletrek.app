@@ -45,6 +45,7 @@ import { LegalScreen } from './LegalScreen';
 import { PitchCoachScreen } from './PitchCoachScreen';
 import { SavedPostsScreen } from './SavedPostsScreen';
 import { SynergyMatchScreen } from './SynergyMatchScreen';
+import { PostDetailScreen } from './PostDetailScreen';
 
 type RootStackParamList = {
   Tabs: undefined;
@@ -65,6 +66,7 @@ type RootStackParamList = {
   SavedPosts: undefined;
   PitchCoach: undefined;
   SynergyMatch: undefined;
+  PostDetail: { postId: string };
 };
 
 const Tab = createBottomTabNavigator();
@@ -81,6 +83,7 @@ const Tabs: React.FC<{
   onOpenVerification: () => void;
   onOpenStoryComposer: () => void;
   onOpenStoryViewer: (authorIndex: number) => void;
+  onOpenPost: (postId: string) => void;
   onLogout: () => void;
 }> = ({
   onOpenCreate,
@@ -93,6 +96,7 @@ const Tabs: React.FC<{
   onOpenVerification,
   onOpenStoryComposer,
   onOpenStoryViewer,
+  onOpenPost,
   onLogout,
 }) => {
   const { palette } = useTheme();
@@ -179,6 +183,7 @@ const Tabs: React.FC<{
               onOpenProfile={onOpenProfile}
               onOpenStoryComposer={onOpenStoryComposer}
               onOpenStoryViewer={onOpenStoryViewer}
+              onOpenPost={onOpenPost}
             />,
           )
         }
@@ -308,6 +313,7 @@ export const Navigator: React.FC = () => {
               onOpenProfile={(userId) => navigation.navigate('UserProfile', { userId })}
               onOpenStoryComposer={() => navigation.navigate('StoryComposer')}
               onOpenStoryViewer={(authorIndex) => navigation.navigate('StoryViewer', { authorIndex })}
+              onOpenPost={(postId) => navigation.navigate('PostDetail', { postId })}
               onLogout={() => {
                 logout();
                 setLogoutKey((k) => k + 1);
@@ -443,6 +449,16 @@ export const Navigator: React.FC = () => {
               onEditProfile={() => navigation.navigate('EditProfile')}
               onOpenProfile={(userId) => navigation.navigate('UserProfile', { userId })}
               onOpenChat={() => navigation.navigate('Tabs' as never)}
+            />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="PostDetail" options={{ animation: 'slide_from_right' }}>
+          {({ navigation, route }) => (
+            <PostDetailScreen
+              postId={(route.params as any).postId}
+              onClose={() => navigation.goBack()}
+              onOpenProfile={(userId) => navigation.navigate('UserProfile', { userId })}
             />
           )}
         </Stack.Screen>

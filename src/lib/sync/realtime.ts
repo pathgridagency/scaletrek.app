@@ -101,6 +101,7 @@ export const subscribeRealtime = (userId: string): (() => void) => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'post_likes' }, refetchPosts)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'post_signals' }, refetchPosts)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'post_media' }, refetchPosts)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, refetchPosts)
       .subscribe(),
   );
 
