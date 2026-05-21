@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useNotificationsStore } from '../store/useNotificationsStore';
 import { Avatar } from '../components/ui/Avatar';
 import { Screen } from '../components/ui/Screen';
+import { AnimatedEntrance } from '../components/ui/AnimatedEntrance';
 import { Notification, NotificationType } from '../data/mockData';
 
 interface Props {
@@ -48,26 +49,28 @@ export const NotificationsScreen: React.FC<Props> = ({ onClose }) => {
         data={items}
         keyExtractor={(item) => item.id}
         contentContainerStyle={s.list}
-        renderItem={({ item }: { item: Notification }) => {
+        renderItem={({ item, index }: { item: Notification; index: number }) => {
           const Icon = iconFor(item.type);
           return (
-            <View style={s.row}>
-              {item.actorAvatar ? (
-                <Avatar initials={item.actorAvatar} size={40} accent="dreamer" />
-              ) : (
-                <View style={s.iconWrap}>
-                  <Icon size={18} color={palette.accent} strokeWidth={1.6} />
+            <AnimatedEntrance index={index}>
+              <View style={s.row}>
+                {item.actorAvatar ? (
+                  <Avatar initials={item.actorAvatar} size={40} accent="dreamer" />
+                ) : (
+                  <View style={s.iconWrap}>
+                    <Icon size={18} color={palette.accent} strokeWidth={1.6} />
+                  </View>
+                )}
+                <View style={s.rowInfo}>
+                  <Text style={s.rowText}>
+                    {item.actorName ? <Text style={s.actor}>{item.actorName} </Text> : null}
+                    {item.message}
+                  </Text>
+                  <Text style={s.rowTime}>{item.createdAt}</Text>
                 </View>
-              )}
-              <View style={s.rowInfo}>
-                <Text style={s.rowText}>
-                  {item.actorName ? <Text style={s.actor}>{item.actorName} </Text> : null}
-                  {item.message}
-                </Text>
-                <Text style={s.rowTime}>{item.createdAt}</Text>
+                {!item.read && <View style={s.unreadDot} />}
               </View>
-              {!item.read && <View style={s.unreadDot} />}
-            </View>
+            </AnimatedEntrance>
           );
         }}
         ListEmptyComponent={

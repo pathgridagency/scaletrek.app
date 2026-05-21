@@ -38,10 +38,15 @@ interface ProfileRow {
   sector?: string | null;
   founded_year?: number | null;
   team_size?: string | null;
+  strengths?: string[] | null;
+  bottlenecks?: string[] | null;
+  open_to_synergy?: boolean | null;
+  synergy_hours_per_week?: number | null;
+  synergy_equity_expectation?: string | null;
 }
 
 const VIEW_COLUMNS =
-  'id,name,username,avatar,role,bio,industry,momentum_score,verification_level,followers,following,showcase_count,suspended,preferred_currency,preferred_language,public_key,joined_at,reveal_to_all,identity_revealed,profile_complete,onboarded,is_pro,avatar_url,cover_url,headline,location,website,linkedin_url,twitter_url,instagram_url,github_url,facebook_url,company_name,sector,founded_year,team_size';
+  'id,name,username,avatar,role,bio,industry,momentum_score,verification_level,followers,following,showcase_count,suspended,preferred_currency,preferred_language,public_key,joined_at,reveal_to_all,identity_revealed,profile_complete,onboarded,is_pro,avatar_url,cover_url,headline,location,website,linkedin_url,twitter_url,instagram_url,github_url,facebook_url,company_name,sector,founded_year,team_size,strengths,bottlenecks,open_to_synergy,synergy_hours_per_week,synergy_equity_expectation';
 
 export const rowToUser = (row: ProfileRow): User => ({
   id: row.id,
@@ -78,6 +83,11 @@ export const rowToUser = (row: ProfileRow): User => ({
   sector: row.sector ?? undefined,
   foundedYear: row.founded_year ?? undefined,
   teamSize: row.team_size ?? undefined,
+  strengths: row.strengths ?? [],
+  bottlenecks: row.bottlenecks ?? [],
+  openToSynergy: row.open_to_synergy ?? false,
+  synergyHoursPerWeek: row.synergy_hours_per_week ?? undefined,
+  synergyEquityExpectation: row.synergy_equity_expectation ?? undefined,
 });
 
 export const fetchAllProfiles = async (): Promise<User[]> => {
@@ -128,6 +138,13 @@ const userPatchToRow = (patch: Partial<User>): Record<string, unknown> => {
   if (patch.sector !== undefined) out.sector = patch.sector;
   if (patch.foundedYear !== undefined) out.founded_year = patch.foundedYear;
   if (patch.teamSize !== undefined) out.team_size = patch.teamSize;
+  if (patch.strengths !== undefined) out.strengths = patch.strengths;
+  if (patch.bottlenecks !== undefined) out.bottlenecks = patch.bottlenecks;
+  if (patch.openToSynergy !== undefined) out.open_to_synergy = patch.openToSynergy;
+  if (patch.synergyHoursPerWeek !== undefined)
+    out.synergy_hours_per_week = patch.synergyHoursPerWeek;
+  if (patch.synergyEquityExpectation !== undefined)
+    out.synergy_equity_expectation = patch.synergyEquityExpectation;
   return out;
 };
 

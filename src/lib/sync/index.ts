@@ -18,6 +18,7 @@ import { useNotificationsStore } from '../../store/useNotificationsStore';
 import { useModerationStore } from '../../store/useModerationStore';
 import { useSubscriptionStore } from '../../store/useSubscriptionStore';
 import { useStoriesStore } from '../../store/useStoriesStore';
+import { useSynergyStore } from '../../store/useSynergyStore';
 import { subscribeRealtime } from './realtime';
 
 const safe = async <T>(label: string, fn: () => Promise<T>): Promise<T | null> => {
@@ -97,6 +98,7 @@ const clearAll = () => {
   useAuthStore.setState({ users: [] });
   useSubscriptionStore.getState().reset();
   useStoriesStore.setState({ stories: [] });
+  useSynergyStore.getState().reset();
 };
 
 export const useSupabaseSync = () => {

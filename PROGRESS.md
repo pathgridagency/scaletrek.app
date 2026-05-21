@@ -327,6 +327,32 @@ intact and the swap is a one-screen change.
 - `src/store/useStoriesStore.ts` — `toggleLike` (optimistic) + comment actions.
 - `src/screens/StoryViewerScreen.tsx` — like button + count, comment sheet (list + composer), delete-comment for permitted users.
 
+## Feed fix — empty Feed / Explore
+
+- `useFeedStore.feedItems()` (powers Feed + Explore) was applying the investor risk/reward slider filter (`riskScore <= riskFilter && rewardScore >= rewardFilter`). Those sliders live on the Investor screen but share `useFeedStore`, and the filter is persisted — adjusting them silently emptied the public feed across restarts. The filter now stays only in `filteredFor()` (Investor screen).
+- `useFeedStore` persist `partialize` added (version 3 → 4): `posts` is no longer written to `AsyncStorage`. Persisting server state risked a stale/empty array rehydrating after the network fetch and blanking the feed. Posts are always re-fetched fresh on auth + realtime.
+
+## Phase 34 — Synergy Match
+
+- `supabase/phase34_synergy_match.sql` — a cross-industry partnership portal. Matches founders on *mutual problem-solving*: User A's `strengths` solving User B's `bottlenecks` and vice-versa. Industry-agnostic.
+  - `profiles` columns: `strengths text[]`, `bottlenecks text[]`, `open_to_synergy`, `synergy_hours_per_week`, `synergy_equity_expectation`.
+  - `synergy_overlap()` / `synergy_pair_score()` — case-insensitive intersection scoring (0-100, mutuality bonus).
+  - `synergy_swipes` (directional interested/pass) + `partnership_matches` (canonical-ordered pair, status pending/matched/rejected, synergy_score) with RLS.
+  - `synergy_candidates()` RPC — ranked, opted-in, not-yet-swiped candidates with live scores. `synergy_swipe(target, dir)` RPC — records a swipe and upserts a `matched` row + notifies both when mutual. `synergy_match_feed` view — the caller's matches flattened against the partner profile.
+  - `public_profiles` rebuilt to expose the 5 synergy columns (masked for hidden investors). Both new tables added to realtime. Applied to the live DB.
+- `src/lib/sync/synergy.ts`, `src/store/useSynergyStore.ts` — sync layer + store (server-derived, not persisted).
+- `src/screens/SynergyMatchScreen.tsx` — Discover (animated card deck, Pass / Connect, "It's a Synergy!" celebration) + Matches tabs. "Skin in the game" gate: needs Open-to-Synergy + ≥3 strengths + ≥1 bottleneck.
+- `EditProfileScreen` — Synergy section: strengths/bottlenecks tag editors, Open-to-Synergy switch, hours/week + equity expectation.
+- Wired into Navigator (`SynergyMatch` route), Settings → Features, realtime (`partnership_matches`), and logout cleanup.
+
+## Motion + polish pass
+
+- `src/components/ui/AnimatedEntrance.tsx` — reusable native-driver fade + slide-up mount animation with optional list stagger. Applied to FeedScreen and NotificationsScreen list items; SynergyMatchScreen has bespoke card + celebration animations.
+
+## App icon fix
+
+- `gen-native-icons.mjs` had a stale hardcoded SVG path (a different repo checkout) so native launcher icons were never regenerated for this checkout — the APK shipped May-16 icons. Paths are now derived from the script location; native `mipmap-*` icons regenerated from `ScaleTrek_AppIcon.svg`.
+
 ## Deploy steps for testers
 
 1. Apply migrations: `cd C:\Users\Admin\Documents\scaletrek\supabase && npx tsx migrate.ts` (or apply a single phase via `npx tsx apply-phase.ts <file>.sql` — e.g. `phase30_post_moderation.sql`).

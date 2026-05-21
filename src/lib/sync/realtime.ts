@@ -14,6 +14,7 @@ import { useSubscriptionStore } from '../../store/useSubscriptionStore';
 import { fetchMySubscription } from './subscriptions';
 import { useStoriesStore } from '../../store/useStoriesStore';
 import { fetchStories } from './stories';
+import { useSynergyStore } from '../../store/useSynergyStore';
 
 // Phase 17 — postgres_changes subscriptions per store.
 // Each subscription debounces a full refetch for that table; this keeps the
@@ -88,6 +89,11 @@ export const subscribeRealtime = (userId: string): (() => void) => {
     if (rows) useStoriesStore.getState().set(rows);
   }, DEBOUNCE_MS);
 
+  // Phase 34 — a new Synergy Match landing live.
+  const refetchSynergy = debounce(() => {
+    useSynergyStore.getState().loadMatches();
+  }, DEBOUNCE_MS);
+
   channels.push(
     supabase
       .channel('realtime:posts')
@@ -149,6 +155,17 @@ export const subscribeRealtime = (userId: string): (() => void) => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'story_views' }, refetchStories)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'story_likes' }, refetchStories)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'story_comments' }, refetchStories)
+      .subscribe(),
+  );
+
+  channels.push(
+    supabase
+      .channel('realtime:synergy')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'partnership_matches' },
+        refetchSynergy,
+      )
       .subscribe(),
   );
 

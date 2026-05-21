@@ -235,16 +235,18 @@ export const useFeedStore = create<FeedState>()(
       },
 
       feedItems: () => {
-        const { posts, feedView, sortMode, riskFilter, rewardFilter } = get();
+        const { posts, feedView, sortMode } = get();
         const meId = useAuthStore.getState().user?.id;
+        // The public Feed / Explore shows every visible post. The risk/reward
+        // sliders are an Investor-screen tool (see `filteredFor`) and must NOT
+        // filter the social feed — tweaking them there would silently empty it.
         const visible = posts
           .filter((p) => !p.removed)
           // Hide pending/rejected posts from everyone EXCEPT their author, so
           // the author sees their own post land immediately (with a "Pending
           // review" banner) instead of the feed appearing not to update.
           .filter((p) => !p.status || p.status === 'approved' || p.userId === meId)
-          .filter((p) => (feedView === 'explore' ? true : p.type === feedView))
-          .filter((p) => p.riskScore <= riskFilter && p.rewardScore >= rewardFilter);
+          .filter((p) => (feedView === 'explore' ? true : p.type === feedView));
         const sorted =
           sortMode === 'top'
             ? [...visible].sort(
@@ -262,6 +264,19 @@ export const useFeedStore = create<FeedState>()(
           .filter((p) => p.type === 'reality' && p.status === 'pending' && !p.removed)
           .sort((a, b) => (b.createdAtMs ?? 0) - (a.createdAtMs ?? 0)),
     }),
-    { name: 'feed', version: 3 },
+    {
+      name: 'feed',
+      // v4: stop persisting `posts`. It is server state — persisting it risks a
+      // stale/empty array rehydrating *after* the network fetch and blanking
+      // the feed. Posts are always re-fetched fresh on auth + via realtime.
+      version: 4,
+      partialize: (s) => ({
+        activeFeed: s.activeFeed,
+        feedView: s.feedView,
+        sortMode: s.sortMode,
+        riskFilter: s.riskFilter,
+        rewardFilter: s.rewardFilter,
+      }),
+    },
   ),
 );

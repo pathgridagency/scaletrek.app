@@ -65,6 +65,11 @@ const PERSISTED_KEYS: (keyof User)[] = [
   'sector',
   'foundedYear',
   'teamSize',
+  'strengths',
+  'bottlenecks',
+  'openToSynergy',
+  'synergyHoursPerWeek',
+  'synergyEquityExpectation',
 ];
 
 const persistedPatch = (patch: Partial<User>): Partial<User> => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
-import { ChevronLeft, Sun, Moon, Smartphone, Trash2, Crown, ChevronRight, Globe, FileText, ShieldCheck, Bookmark, Sparkles } from 'lucide-react-native';
+import { ChevronLeft, Sun, Moon, Smartphone, Trash2, Crown, ChevronRight, Globe, FileText, ShieldCheck, Bookmark, Sparkles, Handshake } from 'lucide-react-native';
 import { Radii, Spacing, Typography } from '../constants/theme';
 import { ThemePreference, useTheme } from '../theme/ThemeContext';
 import { Screen } from '../components/ui/Screen';
@@ -19,6 +19,7 @@ interface Props {
   onOpenTerms?: () => void;
   onOpenSaved?: () => void;
   onOpenPitchCoach?: () => void;
+  onOpenSynergy?: () => void;
 }
 
 export const SettingsScreen: React.FC<Props> = ({
@@ -29,6 +30,7 @@ export const SettingsScreen: React.FC<Props> = ({
   onOpenTerms,
   onOpenSaved,
   onOpenPitchCoach,
+  onOpenSynergy,
 }) => {
   const { palette, preference, setPreference, mode } = useTheme();
   const { t } = useTranslation();
@@ -190,10 +192,20 @@ export const SettingsScreen: React.FC<Props> = ({
           </>
         )}
 
-        {(onOpenSaved || onOpenPitchCoach) && (
+        {(onOpenSaved || onOpenPitchCoach || onOpenSynergy) && (
           <>
             <Text style={s.section}>Features</Text>
             <GlassCard style={s.card}>
+              {onOpenSynergy && (
+                <TouchableOpacity style={s.proRow} onPress={onOpenSynergy}>
+                  <Handshake size={16} color={palette.accent} strokeWidth={1.8} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.proLabel}>Synergy Match</Text>
+                    <Text style={s.proHint}>Find a complementary co-founder</Text>
+                  </View>
+                  <ChevronRight size={16} color={palette.textSecondary} />
+                </TouchableOpacity>
+              )}
               {onOpenSaved && (
                 <TouchableOpacity style={s.proRow} onPress={onOpenSaved}>
                   <Bookmark size={16} color={palette.pro} strokeWidth={1.8} />

@@ -3,9 +3,14 @@
 // is baked into the APK (gradle does not re-derive these from app.config.ts).
 import sharp from 'sharp';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const SVG = 'C:/Users/Admin/Documents/GitHub/ScaleTrek/ScaleTrek_AppIcon.svg';
-const RES = 'C:/Users/Admin/Documents/scaletrek/android/app/src/main/res';
+// Paths are derived from this script's own location so it works regardless of
+// where the repo is checked out.
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const SVG = path.join(ROOT, 'ScaleTrek_AppIcon.svg');
+const RES = path.join(ROOT, 'android', 'app', 'src', 'main', 'res');
 const svg = fs.readFileSync(SVG);
 
 const transparent = { r: 0, g: 0, b: 0, alpha: 0 };

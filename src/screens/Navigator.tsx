@@ -44,6 +44,7 @@ import { StoryViewerScreen } from './StoryViewerScreen';
 import { LegalScreen } from './LegalScreen';
 import { PitchCoachScreen } from './PitchCoachScreen';
 import { SavedPostsScreen } from './SavedPostsScreen';
+import { SynergyMatchScreen } from './SynergyMatchScreen';
 
 type RootStackParamList = {
   Tabs: undefined;
@@ -63,6 +64,7 @@ type RootStackParamList = {
   TermsOfService: undefined;
   SavedPosts: undefined;
   PitchCoach: undefined;
+  SynergyMatch: undefined;
 };
 
 const Tab = createBottomTabNavigator();
@@ -370,6 +372,7 @@ export const Navigator: React.FC = () => {
               onOpenTerms={() => navigation.navigate('TermsOfService')}
               onOpenSaved={() => navigation.navigate('SavedPosts')}
               onOpenPitchCoach={() => navigation.navigate('PitchCoach')}
+              onOpenSynergy={() => navigation.navigate('SynergyMatch')}
             />
           )}
         </Stack.Screen>
@@ -429,6 +432,17 @@ export const Navigator: React.FC = () => {
             <PitchCoachScreen
               onClose={() => navigation.goBack()}
               onUpgrade={() => navigation.navigate('Subscription')}
+            />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="SynergyMatch" options={{ animation: 'slide_from_right' }}>
+          {({ navigation }) => (
+            <SynergyMatchScreen
+              onClose={() => navigation.goBack()}
+              onEditProfile={() => navigation.navigate('EditProfile')}
+              onOpenProfile={(userId) => navigation.navigate('UserProfile', { userId })}
+              onOpenChat={() => navigation.navigate('Tabs' as never)}
             />
           )}
         </Stack.Screen>

@@ -9,11 +9,12 @@ import {
   Platform,
   Switch,
   ActivityIndicator,
+  TextInput,
   Alert,
 } from 'react-native';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { ChevronLeft, ImagePlus, Camera, X } from 'lucide-react-native';
+import { ChevronLeft, ImagePlus, Camera, X, Plus, Zap, Target, Handshake } from 'lucide-react-native';
 import { Radii, Spacing, Typography } from '../constants/theme';
 import { useTheme } from '../theme/ThemeContext';
 import { useAuthStore } from '../store/useAuthStore';
@@ -27,6 +28,81 @@ import { useTranslation } from '../i18n';
 interface Props {
   onClose: () => void;
 }
+
+// Inline tag editor for Synergy Match strengths / bottlenecks.
+const TagEditor: React.FC<{
+  icon: React.ReactNode;
+  color: string;
+  bg: string;
+  tags: string[];
+  onChange: (next: string[]) => void;
+  placeholder: string;
+}> = ({ icon, color, bg, tags, onChange, placeholder }) => {
+  const { palette } = useTheme();
+  const [draft, setDraft] = useState('');
+  const add = () => {
+    const v = draft.trim();
+    if (!v) return;
+    if (!tags.some((t) => t.toLowerCase() === v.toLowerCase())) onChange([...tags, v]);
+    setDraft('');
+  };
+  return (
+    <View style={{ gap: Spacing.sm }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: Spacing.sm,
+          backgroundColor: palette.surface,
+          borderRadius: Radii.md,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: palette.border,
+          paddingLeft: Spacing.md,
+        }}
+      >
+        {icon}
+        <TextInput
+          value={draft}
+          onChangeText={setDraft}
+          onSubmitEditing={add}
+          placeholder={placeholder}
+          placeholderTextColor={palette.textDim}
+          returnKeyType="done"
+          style={{ flex: 1, color: palette.textPrimary, fontSize: Typography.fontSizeSM, paddingVertical: Spacing.md }}
+        />
+        <TouchableOpacity onPress={add} style={{ padding: Spacing.md }} activeOpacity={0.7}>
+          <Plus size={18} color={color} strokeWidth={2.6} />
+        </TouchableOpacity>
+      </View>
+      {tags.length > 0 && (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+          {tags.map((t) => (
+            <TouchableOpacity
+              key={t}
+              onPress={() => onChange(tags.filter((x) => x !== t))}
+              activeOpacity={0.7}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+                backgroundColor: bg,
+                borderRadius: Radii.full,
+                paddingLeft: Spacing.md,
+                paddingRight: Spacing.sm,
+                paddingVertical: 6,
+              }}
+            >
+              <Text style={{ color, fontSize: Typography.fontSizeXS, fontWeight: Typography.fontWeightSemiBold }}>
+                {t}
+              </Text>
+              <X size={11} color={color} strokeWidth={2.6} />
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
 
 export const EditProfileScreen: React.FC<Props> = ({ onClose }) => {
   const { palette } = useTheme();
@@ -55,6 +131,13 @@ export const EditProfileScreen: React.FC<Props> = ({ onClose }) => {
   const [teamSize, setTeamSize] = useState(user?.teamSize ?? '');
   const [mode, setMode] = useState<'personal' | 'business'>(user?.companyName ? 'business' : 'personal');
   const [revealToAll, setRevealToAll] = useState(user?.revealToAll ?? false);
+  const [strengths, setStrengths] = useState<string[]>(user?.strengths ?? []);
+  const [bottlenecks, setBottlenecks] = useState<string[]>(user?.bottlenecks ?? []);
+  const [openToSynergy, setOpenToSynergy] = useState(user?.openToSynergy ?? false);
+  const [synergyHours, setSynergyHours] = useState(
+    user?.synergyHoursPerWeek ? String(user.synergyHoursPerWeek) : '',
+  );
+  const [synergyEquity, setSynergyEquity] = useState(user?.synergyEquityExpectation ?? '');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -122,6 +205,13 @@ export const EditProfileScreen: React.FC<Props> = ({ onClose }) => {
       sector: mode === 'business' ? sector.trim() || undefined : undefined,
       foundedYear: mode === 'business' && year && !Number.isNaN(year) ? year : undefined,
       teamSize: mode === 'business' ? teamSize.trim() || undefined : undefined,
+      strengths,
+      bottlenecks,
+      openToSynergy,
+      synergyHoursPerWeek: synergyHours.trim()
+        ? Number.parseInt(synergyHours, 10) || undefined
+        : undefined,
+      synergyEquityExpectation: synergyEquity.trim() || undefined,
       ...(user.role === 'investor' ? { revealToAll } : {}),
     });
     onClose();
@@ -293,6 +383,72 @@ export const EditProfileScreen: React.FC<Props> = ({ onClose }) => {
             </View>
           )}
 
+          {/* Synergy Match */}
+          <View style={s.synergyHeader}>
+            <Handshake size={15} color={palette.accent} strokeWidth={2} />
+            <Text style={[s.sectionLabel, { marginTop: 0 }]}>Synergy Match</Text>
+          </View>
+          <View style={s.privacyCard}>
+            <View style={s.privacyRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={s.privacyTitle}>Open to Synergy</Text>
+                <Text style={s.privacyHint}>
+                  When on, complementary founders can discover you for a sweat-equity
+                  partnership. Needs at least 3 strengths and 1 bottleneck.
+                </Text>
+              </View>
+              <Switch
+                value={openToSynergy}
+                onValueChange={setOpenToSynergy}
+                trackColor={{ true: palette.accent, false: palette.border }}
+                thumbColor={palette.card}
+              />
+            </View>
+          </View>
+
+          <Text style={[s.sectionLabel, { marginTop: Spacing.xs }]}>
+            My superpowers — what you execute masterfully
+          </Text>
+          <TagEditor
+            icon={<Zap size={16} color={palette.success} strokeWidth={2.4} />}
+            color={palette.success}
+            bg={palette.realitySubtle}
+            tags={strengths}
+            onChange={setStrengths}
+            placeholder="e.g. Media buying, Supply chain…"
+          />
+
+          <Text style={s.sectionLabel}>My bottlenecks — what blocks you from scaling</Text>
+          <TagEditor
+            icon={<Target size={16} color={palette.warning} strokeWidth={2.4} />}
+            color={palette.warning}
+            bg={palette.eliteSubtle}
+            tags={bottlenecks}
+            onChange={setBottlenecks}
+            placeholder="e.g. Product sourcing, Fundraising…"
+          />
+
+          <View style={s.row}>
+            <View style={{ flex: 1 }}>
+              <TextField
+                label="Hours / week"
+                value={synergyHours}
+                onChangeText={setSynergyHours}
+                keyboardType="numeric"
+                maxLength={2}
+                placeholder="10"
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <TextField
+                label="Equity expectation"
+                value={synergyEquity}
+                onChangeText={setSynergyEquity}
+                placeholder="e.g. 50/50, negotiable"
+              />
+            </View>
+          </View>
+
           {error && <Text style={s.error}>{error}</Text>}
 
           <Button label={t('common.save')} onPress={save} />
@@ -390,6 +546,12 @@ const styles = (p: ReturnType<typeof useTheme>['palette']) =>
       marginTop: Spacing.sm,
     },
     error: { color: p.error, fontSize: Typography.fontSizeSM, textAlign: 'center' },
+    synergyHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginTop: Spacing.lg,
+    },
     privacyCard: {
       padding: Spacing.md,
       borderRadius: Radii.md,

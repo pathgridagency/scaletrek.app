@@ -12,6 +12,7 @@ import { Avatar } from '../components/ui/Avatar';
 import { Screen } from '../components/ui/Screen';
 import { IconButton } from '../components/ui/IconButton';
 import { StoriesRail } from '../components/stories/StoriesRail';
+import { AnimatedEntrance } from '../components/ui/AnimatedEntrance';
 import { useChatStore } from '../store/useChatStore';
 import { ShowcasePost } from '../data/mockData';
 import { useTranslation } from '../i18n';
@@ -41,8 +42,6 @@ export const FeedScreen: React.FC<Props> = ({
   const toggleSignal = useFeedStore((s) => s.toggleSignal);
   const feedItems = useFeedStore((s) => s.feedItems);
   const allPosts = useFeedStore((s) => s.posts);
-  const riskFilter = useFeedStore((s) => s.riskFilter);
-  const rewardFilter = useFeedStore((s) => s.rewardFilter);
   const user = useAuthStore((s) => s.user);
   const notifItems = useNotificationsStore((s) => s.items);
   const push = useNotificationsStore((s) => s.push);
@@ -54,7 +53,7 @@ export const FeedScreen: React.FC<Props> = ({
 
   const posts = useMemo(
     () => feedItems().filter((p) => !blockedIds.includes(p.userId)),
-    [feedItems, feedView, sortMode, allPosts, riskFilter, rewardFilter, blockedIds],
+    [feedItems, feedView, sortMode, allPosts, blockedIds],
   );
   const accentKey: 'dreamer' | 'reality' = feedView === 'reality' ? 'reality' : 'dreamer';
   const a = accentFor(palette, accentKey);
@@ -184,16 +183,18 @@ export const FeedScreen: React.FC<Props> = ({
         ListHeaderComponent={
           <StoriesRail onOpenComposer={onOpenStoryComposer} onOpenStory={onOpenStoryViewer} />
         }
-        renderItem={({ item }) => (
-          <FeedCard
-            post={item}
-            liked={user ? item.likedBy?.includes(user.id) : false}
-            signaled={user ? item.signaledBy?.includes(user.id) : false}
-            onLike={(id) => user && toggleLike(id, user.id)}
-            onSignal={() => handleSignal(item)}
-            onAuthorPress={onOpenProfile}
-            onReport={(id) => user && reportPost(id, user.id, 'flagged from feed')}
-          />
+        renderItem={({ item, index }) => (
+          <AnimatedEntrance index={index}>
+            <FeedCard
+              post={item}
+              liked={user ? item.likedBy?.includes(user.id) : false}
+              signaled={user ? item.signaledBy?.includes(user.id) : false}
+              onLike={(id) => user && toggleLike(id, user.id)}
+              onSignal={() => handleSignal(item)}
+              onAuthorPress={onOpenProfile}
+              onReport={(id) => user && reportPost(id, user.id, 'flagged from feed')}
+            />
+          </AnimatedEntrance>
         )}
         contentContainerStyle={s.list}
         showsVerticalScrollIndicator={false}

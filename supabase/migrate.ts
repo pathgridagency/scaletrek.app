@@ -78,6 +78,7 @@ const main = async () => {
   await runFile(client, 'phase30_post_moderation.sql');
   await runFile(client, 'phase32_fix_public_profiles.sql');
   await runFile(client, 'phase33_story_engagement.sql');
+  await runFile(client, 'phase34_synergy_match.sql');
   await runFile(client, 'seed.sql');
 
   console.log('▶ wiping existing users...');

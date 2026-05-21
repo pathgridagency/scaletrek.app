@@ -48,6 +48,12 @@ export interface User {
   sector?: string;
   foundedYear?: number;
   teamSize?: string;
+  // Phase 34: Synergy Match — cross-industry partnership matching.
+  strengths?: string[];
+  bottlenecks?: string[];
+  openToSynergy?: boolean;
+  synergyHoursPerWeek?: number;
+  synergyEquityExpectation?: string;
 }
 
 export interface Credential {
