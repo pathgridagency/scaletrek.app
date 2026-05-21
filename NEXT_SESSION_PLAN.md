@@ -132,6 +132,10 @@ milestone.
     feed, comments, chat, synergy while loading.
 11. **Onboarding nudge** — prompt new users to fill strengths/bottlenecks so
     Synergy Match has signal.
+12. **Splash screen** — a native static splash already exists (`app.config.ts`
+    `splash` + `drawable-*/splashscreen_logo.png`). Add a polished **animated
+    in-app splash** (logo reveal / fade) shown over the hydration gate in
+    `Navigator.tsx` while stores load, then cross-fade into the app.
 
 ---
 
