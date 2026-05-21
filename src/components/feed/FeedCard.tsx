@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import { Heart, MessageCircle, Bookmark, Flag, Clock, AlertCircle } from 'lucide-react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Share } from 'react-native';
+import { Heart, MessageCircle, Bookmark, Flag, Clock, AlertCircle, Share2 } from 'lucide-react-native';
 import { ShowcasePost } from '../../data/mockData';
 import { Radii, Spacing, Typography, accentFor } from '../../constants/theme';
 import { useTheme } from '../../theme/ThemeContext';
@@ -47,6 +47,14 @@ export const FeedCard: React.FC<Props> = ({
     : 0;
 
   const s = styles(palette);
+
+  const handleShare = () => {
+    Share.share({
+      message:
+        `${post.userName} on ScaleTrek\n\n"${post.milestoneTitle}"\n${post.description}` +
+        `\n\nOpen in ScaleTrek: scaletrek://post/${post.id}`,
+    }).catch(() => {});
+  };
 
   return (
     <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
@@ -161,6 +169,9 @@ export const FeedCard: React.FC<Props> = ({
               <TouchableOpacity style={s.action} onPress={() => onComment?.(post.id)}>
                 <MessageCircle size={14} color={palette.textSecondary} strokeWidth={1.6} />
                 <Text style={s.actionCount}>{post.comments}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={s.action} onPress={handleShare}>
+                <Share2 size={14} color={palette.textMuted} strokeWidth={1.6} />
               </TouchableOpacity>
               <TouchableOpacity style={s.action} onPress={() => onReport?.(post.id)}>
                 <Flag size={14} color={palette.textMuted} strokeWidth={1.5} />
