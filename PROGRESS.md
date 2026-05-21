@@ -353,6 +353,11 @@ intact and the swap is a one-screen change.
 
 - `gen-native-icons.mjs` had a stale hardcoded SVG path (a different repo checkout) so native launcher icons were never regenerated for this checkout — the APK shipped May-16 icons. Paths are now derived from the script location; native `mipmap-*` icons regenerated from `ScaleTrek_AppIcon.svg`.
 
+## Repository
+
+- Git remote `origin` → `https://github.com/pathgridagency/scaletrek.app` (org `pathgridagency`). `master` first pushed 2026-05-21 — commit `4b7008f` (phases 1-33) and `cd32137` (Synergy Match phase 34, feed fix, motion pass, icon fix).
+- `android/`, `node_modules/`, `.env`/`.env.*`, and `*.keystore*` are gitignored — release APKs are **not** in the repo (build artifacts only, share the file directly).
+
 ## Deploy steps for testers
 
 1. Apply migrations: `cd C:\Users\Admin\Documents\scaletrek\supabase && npx tsx migrate.ts` (or apply a single phase via `npx tsx apply-phase.ts <file>.sql` — e.g. `phase30_post_moderation.sql`).
