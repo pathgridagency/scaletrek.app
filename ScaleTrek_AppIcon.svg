@@ -1,0 +1,50 @@
+<svg width="512" height="512" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00E5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF9500;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFB020;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#141419;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0A0A0F;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <path d="M20 0 H100 Q120 0 120 20 V100 Q120 120 100 120 H20 Q0 120 0 100 V20 Q0 0 20 0 Z" fill="url(#backgroundGradient)"/>
+  
+  <!-- Geometric Trek Path -->
+  <g opacity="0.15">
+    <path d="M20 100 L35 85 L50 75 L65 60 L80 40 L95 20" stroke="#00E5FF" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M15 95 L30 80 L45 70 L60 55 L75 35 L90 15" stroke="#00E5FF" stroke-width="1" fill="none" opacity="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Node 1 - Start/Dreamer -->
+  <circle cx="35" cy="85" r="8" fill="url(#amberGradient)" opacity="0.9"/>
+  <circle cx="35" cy="85" r="12" fill="none" stroke="url(#amberGradient)" stroke-width="1.5" opacity="0.3"/>
+  
+  <!-- Node 2 - Progress/Validation -->
+  <circle cx="60" cy="60" r="10" fill="url(#cyanGradient)" opacity="0.95"/>
+  <circle cx="60" cy="60" r="15" fill="none" stroke="url(#cyanGradient)" stroke-width="1.5" opacity="0.4"/>
+  
+  <!-- Node 3 - Reality/Success -->
+  <circle cx="85" cy="35" r="12" fill="#00C896" opacity="1"/>
+  <circle cx="85" cy="35" r="18" fill="none" stroke="#00C896" stroke-width="1.5" opacity="0.5"/>
+  
+  <!-- Connecting Path -->
+  <path d="M35 85 Q45 72 60 60 Q72 48 85 35" stroke="url(#cyanGradient)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Progress dots -->
+  <circle cx="42" cy="77" r="2" fill="#00E5FF" opacity="0.6"/>
+  <circle cx="52" cy="68" r="2" fill="#00E5FF" opacity="0.7"/>
+  <circle cx="68" cy="52" r="2" fill="#00E5FF" opacity="0.7"/>
+  <circle cx="78" cy="43" r="2" fill="#00E5FF" opacity="0.6"/>
+  
+  <!-- Glow effects -->
+  <circle cx="60" cy="60" r="10" fill="url(#cyanGradient)" opacity="0.2"/>
+  <circle cx="85" cy="35" r="12" fill="#00C896" opacity="0.15"/>
+</svg>

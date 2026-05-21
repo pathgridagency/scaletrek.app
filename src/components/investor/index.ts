@@ -1,0 +1,1 @@
+export { InvestorControlPanel } from './InvestorControlPanel';
